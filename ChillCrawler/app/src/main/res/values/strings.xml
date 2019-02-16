@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ChillCrawler</string>
+    <string name="please_establish_connection_to_the_spider">Please establish connection to the spider !</string>
+</resources>
