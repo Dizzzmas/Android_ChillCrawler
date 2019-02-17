@@ -25,8 +25,9 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.982" />
 
+
     <Button
-        android:id="@+id/push_button"
+        android:id="@+id/connect"
         android:layout_width="209dp"
         android:layout_height="61dp"
         android:layout_marginStart="8dp"
@@ -45,6 +46,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.505" />
+    <!--android:foreground="?attr/selectableItemBackgroundBorderless" -->
 
     <ImageView
         android:id="@+id/imageView2"
@@ -53,13 +55,13 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="24dp"
+        android:contentDescription="TODO"
         app:layout_constraintBottom_toTopOf="@+id/push_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/ic_image2vector"
-        android:contentDescription="TODO" />
+        app:srcCompat="@drawable/ic_image2vector" />
 
     <ImageView
         android:id="@+id/imageView3"

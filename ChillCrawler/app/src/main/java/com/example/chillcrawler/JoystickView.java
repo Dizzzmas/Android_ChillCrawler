@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -35,7 +34,8 @@ public class JoystickView extends SurfaceView implements SurfaceHolder.Callback,
             myCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR); //Clear Canvas
             colors.setARGB(255, 50, 50, 50); //set the color
             myCanvas.drawCircle(centerX, centerY, baseRadius, colors); //draw the base
-            colors.setARGB(255, 0, 0, 255);
+
+            colors.setARGB(255, 0, 230, 118);
             myCanvas.drawCircle(newX, newY, hatRadius, colors);//draw hat
             getHolder().unlockCanvasAndPost(myCanvas); //print to SurfaceView
         }
