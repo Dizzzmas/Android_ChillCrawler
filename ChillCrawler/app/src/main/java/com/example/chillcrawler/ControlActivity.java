@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.view.Menu;
 
 
 import com.example.chillcrawler.JoystickView;
@@ -41,8 +42,15 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
             }
         });
 
+
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
 
     @Override
     public void onJoystickMoved(float xPercent, float yPercent, int id) {

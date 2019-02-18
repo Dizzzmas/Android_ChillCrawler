@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/test1"
+        android:title="@string/test1"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/test2"
+        android:title="@string/test2"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/test3"
+        android:title="@string/test3"
+        app:showAsAction="never" />
+
+
+</menu>
