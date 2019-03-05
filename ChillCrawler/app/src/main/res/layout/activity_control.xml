@@ -29,6 +29,7 @@
         android:layout_height="76dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="204dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/round_button"
         android:foreground="?attr/selectableItemBackgroundBorderless"
@@ -36,9 +37,12 @@
         android:textColor="@color/colorRed"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageButton"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.487" />
+        app:layout_constraintVertical_bias="0.42" />
 
     <ImageButton
         android:id="@+id/imageButton"
@@ -57,7 +61,7 @@
         app:layout_constraintStart_toEndOf="@+id/flex"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.487"
+        app:layout_constraintVertical_bias="0.422"
         app:srcCompat="@drawable/ic_music_player" />
 
     <ImageView

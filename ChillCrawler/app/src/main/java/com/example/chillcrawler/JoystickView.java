@@ -17,6 +17,7 @@ public class JoystickView extends SurfaceView implements SurfaceHolder.Callback,
     private float centerY;
     private float baseRadius;
     private float hatRadius;
+    private int ratio = 500;
     private JoystickListener joystickCallback;
 
     void setupDimensions() {
@@ -27,14 +28,22 @@ public class JoystickView extends SurfaceView implements SurfaceHolder.Callback,
     }
 
     private void drawJoystick(float newX, float newY) {
-        if (getHolder().getSurface().isValid()) {  //only if SurfaceView was created
+        if (getHolder().getSurface().isValid()) {
+            //only if SurfaceView was created
             Canvas myCanvas = this.getHolder().lockCanvas(); //get access to Canvas
             Paint colors = new Paint();
 
             myCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR); //Clear Canvas
+
+            float hypotenuse = (float) Math.sqrt(Math.pow(newX - centerX, 2) + Math.pow(newY - centerY, 2));
+            float sin = (newY - centerY) / hypotenuse;
+            float cos = (newX - centerX) / hypotenuse;
             colors.setARGB(255, 50, 50, 50); //set the color
             myCanvas.drawCircle(centerX, centerY, baseRadius, colors); //draw the base
-
+            for (int i = 1; i <= (int) (baseRadius / ratio); i++) {
+                colors.setARGB((150 / i), 255, 0, 0);
+                myCanvas.drawCircle(newX - cos * hypotenuse * (ratio / baseRadius) * i, newY - sin * hypotenuse * (ratio / baseRadius) * i, i * (hatRadius * ratio / baseRadius), colors);
+            }
             colors.setARGB(255, 0, 230, 118);
             myCanvas.drawCircle(newX, newY, hatRadius, colors);//draw hat
             getHolder().unlockCanvasAndPost(myCanvas); //print to SurfaceView

@@ -78,4 +78,10 @@
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/ic_spidervector_01" />
 
+    <ListView
+        android:layout_below="@id/connect"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:id="@+id/lvNewDevices"/>
+
 </android.support.constraint.ConstraintLayout>
