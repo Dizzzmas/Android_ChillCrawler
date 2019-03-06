@@ -45,7 +45,7 @@
         app:layout_constraintVertical_bias="0.42" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/sound"
         android:layout_width="83dp"
         android:layout_height="76dp"
         android:layout_gravity="center"
@@ -81,7 +81,7 @@
     <ImageView
         android:id="@+id/imageView5"
         android:layout_width="336dp"
-        android:layout_height="292dp"
+        android:layout_height="297dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
