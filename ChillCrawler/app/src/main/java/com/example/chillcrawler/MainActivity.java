@@ -21,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
     private Set<BluetoothDevice> pairedDevices;
     Button connect;
     ListView devicelist;
-    boolean flag = false;
 
 
     @Override
@@ -51,16 +50,6 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     pairedDevicesList();
                 }
-
-
-//                final Intent intent = new Intent(Intent.ACTION_MAIN, null);   //move to bluetooth menu
-//                intent.addCategory(Intent.CATEGORY_LAUNCHER);
-//                ComponentName cn = new ComponentName("com.android.settings",
-//                        "com.android.settings.bluetooth.BluetoothSettings");
-//                intent.setComponent(cn);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                flag = true;
-//                startActivity(intent);
 
             }
 
