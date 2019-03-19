@@ -1,21 +1,37 @@
 package com.example.chillcrawler;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.net.Uri;
+import android.nfc.Tag;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.provider.Settings;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.view.Menu;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -30,12 +46,18 @@ import com.nightonke.boommenu.Piece.PiecePlaceEnum;
 import com.nightonke.boommenu.Util;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Locale;
 import java.util.UUID;
 
 
 public class ControlActivity extends AppCompatActivity implements JoystickView.JoystickListener {
 
     ImageButton sound;
+    EditText editText;
+    SpeechRecognizer mSpeechRecognizer;
+    Intent mSpeechRecognizerIntent;
+    String res;
 
     private int BUTTON_STATE = 0;
     private int BUTTON_STATE_ONCE = 0;
@@ -58,11 +80,100 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
         setContentView(R.layout.activity_control);
         ControlActivity.this.new ConnectBT().execute();
 
+        //SpeechRecognizer
+
+        editText = findViewById(R.id.editText);
+        mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+        mSpeechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.US);
 
 
-        BoomMenuButton bmb = findViewById(R.id.bmb);
+        mSpeechRecognizer.setRecognitionListener(new RecognitionListener() {
+            @Override
+            public void onReadyForSpeech(Bundle params) {
+
+            }
+
+            @Override
+            public void onBeginningOfSpeech() {
+
+            }
+
+            @Override
+            public void onRmsChanged(float rmsdB) {
+
+            }
+
+            @Override
+            public void onBufferReceived(byte[] buffer) {
+
+            }
+
+            @Override
+            public void onEndOfSpeech() {
+
+            }
+
+            @Override
+            public void onError(int error) {
+
+            }
+
+            @Override
+            public void onResults(Bundle results) {
+                ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+
+                if (matches != null) {
+                    //Log.d("TAG", matches.get(0));
+                    // msg(matches.get(0));
+                    res = matches.get(0);
+                    Log.d("TAG", res);
+                    editText.setText(res);
+                    sendVoice(res);
+                }
+            }
+
+            @Override
+            public void onPartialResults(Bundle partialResults) {
+
+            }
+
+            @Override
+            public void onEvent(int eventType, Bundle params) {
+
+            }
+        });
+
+        findViewById(R.id.microphone).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_UP:
+                        mSpeechRecognizer.stopListening();
+                        //msg(res);
+                        //sendVoice(res);
+                        editText.setHint("Input...");
+                        break;
+                    case MotionEvent.ACTION_DOWN:
+                        //msg("Start listening");
+                        mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+                        editText.setText("");
+                        editText.setHint("Listening...");
+                        //mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+                        break;
+                }
+                return false;
+            }
+
+        });
+
 
 //BOOM MENU
+        BoomMenuButton bmb = findViewById(R.id.bmb);
+
+
         TextInsideCircleButton.Builder builder = new TextInsideCircleButton.Builder()
                 .normalImageRes(R.drawable.ic_octicons_arrow_up)
                 .normalTextRes(R.string.stand)
@@ -74,13 +185,13 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
                 .highlightedColor(R.color.colorGreen)
                 .normalTextColor(Color.BLACK)
                 .listener(new OnBMClickListener() {
-                        @Override
-                        public void onBoomButtonClick(int index) {
-                            // When the boom-button corresponding this builder is clicked.
-                            Toast.makeText(ControlActivity.this, "Clicked " + index, Toast.LENGTH_SHORT).show();
-                            sendStand();
-                        }
-                    });
+                    @Override
+                    public void onBoomButtonClick(int index) {
+                        // When the boom-button corresponding this builder is clicked.
+                        Toast.makeText(ControlActivity.this, "Clicked " + index, Toast.LENGTH_SHORT).show();
+                        sendStand();
+                    }
+                });
         bmb.addBuilder(builder);
         TextInsideCircleButton.Builder builder1 = new TextInsideCircleButton.Builder()
                 .normalImageRes(R.drawable.ic_octicons_arrow_down)
@@ -88,10 +199,8 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
                 .rippleEffect(true)
                 .normalColorRes(R.color.colorGreen)
                 .highlightedColor(R.color.colorGreen)
-                .pieceColor(Color.BLACK)
-                .highlightedTextColor(Color.BLACK)
-                .imagePadding(new Rect(0, 0, 0, 10))
                 .normalTextColor(Color.BLACK)
+                .pieceColor(Color.BLACK)
                 .listener(new OnBMClickListener() {
                     @Override
                     public void onBoomButtonClick(int index) {
@@ -100,6 +209,7 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
                         sendSit();
                     }
                 });
+
         bmb.addBuilder(builder1);
         TextInsideCircleButton.Builder builder2 = new TextInsideCircleButton.Builder()
                 .normalImageRes(R.drawable.ic_waving_hand)
@@ -118,8 +228,7 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
                     }
                 });
         bmb.addBuilder(builder2);
-
-
+//BOOM MENU END
 
 
         final Button flex = findViewById(R.id.flex);
@@ -162,6 +271,17 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
         }
     }
 
+    private void sendVoice(String voice) {
+        if (btSocket != null) {
+            try {
+               voice = voice.toUpperCase();
+                btSocket.getOutputStream().write(voice.getBytes());
+            } catch (IOException e) {
+                msg("Error");
+            }
+        }
+    }
+
     private void sendSit() {
         if (btSocket != null) {
             try {
@@ -186,6 +306,17 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
+    }
+
+    private void checkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+                finish();
+            }
+        }
     }
 
     @Override
