@@ -9,10 +9,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(turnBTon, 1);
         }
 
+        LinearLayout dim_layout = findViewById(R.id.dim_layout);  //overlay layout
+        dim_layout.setVisibility(View.VISIBLE);
+
 
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION); //MOVE to control
 
@@ -78,6 +83,25 @@ public class MainActivity extends AppCompatActivity {
                     pairedDevicesList();
                 }
 
+            }
+
+        });
+
+
+
+        //mic button test
+
+        findViewById(R.id.microphone).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                switch (event.getAction()) {
+
+                    case MotionEvent.ACTION_DOWN:
+                       Toast.makeText(getApplicationContext(), "pressed mic", Toast.LENGTH_LONG).show();
+                       break;
+                }
+                return false;
             }
 
         });
