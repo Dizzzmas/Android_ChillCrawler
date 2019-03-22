@@ -48,13 +48,13 @@ import android.widget.Toast;
 
 
 import com.example.chillcrawler.JoystickView;
+import com.github.zagum.speechrecognitionview.RecognitionProgressView;
+import com.github.zagum.speechrecognitionview.adapters.RecognitionListenerAdapter;
 import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
 import com.nightonke.boommenu.BoomButtons.SimpleCircleButton;
 import com.nightonke.boommenu.BoomButtons.TextInsideCircleButton;
 import com.nightonke.boommenu.BoomMenuButton;
-import com.nightonke.boommenu.ButtonEnum;
-import com.nightonke.boommenu.Piece.PiecePlaceEnum;
-import com.nightonke.boommenu.Util;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,6 +68,8 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
     SpeechRecognizer mSpeechRecognizer;
     Intent mSpeechRecognizerIntent;
     String res;
+    RecognitionProgressView recognitionProgressView;
+
 
     private int BUTTON_STATE = 0;
     private int BUTTON_STATE_ONCE = 0;
@@ -89,14 +91,45 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
         address = newint.getStringExtra("EXTRA_ADDRESS");
         setContentView(R.layout.activity_control);
         ControlActivity.this.new ConnectBT().execute();
+        int[] colors = {
+                ContextCompat.getColor(this, R.color.colorGreen),
+                ContextCompat.getColor(this, R.color.colorLightGrey),
+                ContextCompat.getColor(this, R.color.colorGreen),
+                ContextCompat.getColor(this, R.color.colorLightGrey),
+                ContextCompat.getColor(this, R.color.colorGreen)
+        };
+        int[] heights = {60, 76, 58, 80, 55};
+
+
+
 
         //SpeechRecognizer
 
         editText = findViewById(R.id.editText);
+        editText.setClickable(false);
+        editText.setEnabled(false);
         mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         mSpeechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.US);
+
+        //Audio visualizer
+        recognitionProgressView = findViewById(R.id.recognition_view);
+        recognitionProgressView.setSpeechRecognizer(mSpeechRecognizer);
+        recognitionProgressView.setColors(colors);
+        recognitionProgressView.setBarMaxHeightsInDp(heights);
+//        recognitionProgressView.setRecognitionListener(new RecognitionListenerAdapter() {
+//            @Override
+//            public void onResults(Bundle results) {
+//                //showResults(results);
+//            }
+//        });
+        recognitionProgressView.setCircleRadiusInDp(2);
+        recognitionProgressView.setSpacingInDp(2);
+        recognitionProgressView.setIdleStateAmplitudeInDp(2);
+        recognitionProgressView.setRotationRadiusInDp(10);
+        recognitionProgressView.play();
+
 
 
         mSpeechRecognizer.setRecognitionListener(new RecognitionListener() {
@@ -132,6 +165,9 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
 
             @Override
             public void onResults(Bundle results) {
+
+
+
                 ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 
                 if (matches != null) {
@@ -142,6 +178,8 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
                     editText.setText(res);
                     sendVoice(res);
                 }
+
+
             }
 
             @Override
@@ -163,22 +201,42 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_UP:
                         mSpeechRecognizer.stopListening();
+                        recognitionProgressView.stop();
+
+
                         //msg(res);
                         //sendVoice(res);
-                        editText.setHint("Input...");
+                        //editText.setHint("Input...");
                         break;
+
                     case MotionEvent.ACTION_DOWN:
-                        //msg("Start listening");
+
+
                         mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+                        recognitionProgressView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                startRecognition();
+                            }
+                        }, 50);
+
                         editText.setText("");
-                        editText.setHint("Listening...");
+
+
+                        //msg("Start listening");
+
+
+                        //editText.setHint("Listening...");
                         //mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+
                         break;
                 }
                 return false;
             }
 
         });
+
+
 
 
 //BOOM MENU
@@ -267,6 +325,9 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
     }
 
 
+
+
+
     private void msg(String s) {
         Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
     }
@@ -313,6 +374,9 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
         }
     }
 
+    private void startRecognition() {
+
+    }
 
     //TOOLBAR MENU
     @Override
@@ -323,12 +387,12 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
         return true;
     }
 
-    private void showPopup(View v){
-        PopupMenu popup = new PopupMenu(this, v);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.main_menu, popup.getMenu());
-        popup.show();
-    }
+//    private void showPopup(View v){
+//        PopupMenu popup = new PopupMenu(this, v);
+//        MenuInflater inflater = popup.getMenuInflater();
+//        inflater.inflate(R.menu.main_menu, popup.getMenu());
+//        popup.show();
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -444,7 +508,8 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
 
     }
 
-//BT CONNECT
+
+    //BT CONNECT
     private class ConnectBT extends AsyncTask<Void, Void, Void>  // UI thread
     {
         private boolean ConnectSuccess = true; //if it's here, it's almost connected

@@ -97,13 +97,19 @@
         android:orientation="vertical"
         />
 
+    <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--ali></RelativeLayout>-->
+
     <LinearLayout android:id="@+id/voice_layout"
         android:layout_height="match_parent"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:clickable="true"
         android:focusable="true"
         android:translationZ="3dp"
         android:gravity="center|bottom"
+        android:orientation="vertical"
         android:background="@android:color/transparent"
         android:visibility="invisible"
         >
@@ -114,34 +120,52 @@
         <!--android:layout_marginBottom="8dp"-->
         <!--android:layout_-->
 
-    <ImageButton
-        android:id="@+id/microphone"
-        android:layout_width="83dp"
-        android:layout_height="76dp"
-        android:layout_gravity="center_vertical|bottom"
-       android:layout_marginBottom="50dp"
 
-        android:background="@drawable/round_button"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
-        android:translationZ="3dp"
-        app:srcCompat="@drawable/ic_microphone_black_shape" />
+
+        <com.github.zagum.speechrecognitionview.RecognitionProgressView
+            android:id="@+id/recognition_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:translationZ="3dp"
+            android:layout_marginBottom="50dp"
+            android:layout_gravity="center"/>
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="180dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="15dp"
+            android:translationZ="3dp"
+            android:ems="10"
+            android:clickable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:focusable="false"
+            android:background="@null"
+            android:layout_gravity="center|top"
+            android:textColor="@color/colorWhite"
+
+            />
+
+        <ImageButton
+            android:id="@+id/microphone"
+            android:layout_width="83dp"
+            android:layout_height="76dp"
+            android:layout_gravity="center|bottom"
+            android:layout_marginBottom="60dp"
+
+            android:background="@drawable/round_button"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:translationZ="3dp"
+            app:srcCompat="@drawable/ic_microphone_black_shape" />
+
     </LinearLayout>
 
 
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:textColor="@color/colorWhite"
-        android:hint="Input..."
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent"-->
 
 </android.support.constraint.ConstraintLayout>
 
