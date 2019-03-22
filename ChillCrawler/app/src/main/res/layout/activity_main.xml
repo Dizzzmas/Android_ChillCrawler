@@ -87,39 +87,39 @@
         android:id="@+id/lvNewDevices"/>
 
 
-        <LinearLayout android:id="@+id/dim_layout"
-            android:translationZ="9dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#90000000"
-            android:visibility="visible"
-            />
+        <!--<LinearLayout android:id="@+id/dim_layout"-->
+            <!--android:translationZ="2dp"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:background="#90000000"-->
+            <!--android:visibility="invisible"-->
+            <!--/>-->
 
-        <LinearLayout android:id="@+id/voice_layout"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            android:clickable="true"
-            android:focusable="true"
-            android:translationZ="10dp"
-            android:background="@android:color/transparent"
-            android:visibility="visible"
-            >
-            <ImageButton
-                android:id="@+id/microphone"
-                android:layout_width="66dp"
-                android:layout_height="73dp"
-                android:translationZ="10dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@null"
-                android:layout_gravity="bottom"
-                android:layout_margin="150dp"
-                app:srcCompat="@drawable/ic_microphone" />
+        <!--<LinearLayout android:id="@+id/voice_layout"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:clickable="true"-->
+            <!--android:focusable="true"-->
+            <!--android:translationZ="3dp"-->
+            <!--android:background="@android:color/transparent"-->
+            <!--android:visibility="invisible"-->
+            <!--&gt;-->
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/microphone"-->
+                <!--android:layout_width="83dp"-->
+                <!--android:layout_height="76dp"-->
+                <!--android:layout_marginStart="8dp"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--android:layout_marginEnd="204dp"-->
+                <!--android:layout_marginBottom="8dp"-->
+                <!--android:background="@drawable/round_button"-->
+                <!--android:foreground="?attr/selectableItemBackgroundBorderless"-->
+                <!--android:translationZ="3dp"-->
+                <!--app:srcCompat="@drawable/ic_microphone_black_shape" />-->
 
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
 
 

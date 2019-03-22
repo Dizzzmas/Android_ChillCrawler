@@ -59,8 +59,7 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(turnBTon, 1);
         }
 
-        LinearLayout dim_layout = findViewById(R.id.dim_layout);  //overlay layout
-        dim_layout.setVisibility(View.VISIBLE);
+
 
 
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION); //MOVE to control
@@ -91,20 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
         //mic button test
 
-        findViewById(R.id.microphone).setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
 
-                switch (event.getAction()) {
-
-                    case MotionEvent.ACTION_DOWN:
-                       Toast.makeText(getApplicationContext(), "pressed mic", Toast.LENGTH_LONG).show();
-                       break;
-                }
-                return false;
-            }
-
-        });
 
 
     }

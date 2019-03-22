@@ -1,18 +1,59 @@
-<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ControlActivity">
+
+
     <item
-        android:id="@+id/test1"
-        android:title="@string/test1"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/test2"
-        android:title="@string/test2"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/test3"
-        android:title="@string/test3"
-        app:showAsAction="never" />
+    android:id="@+id/action_test1"
+    android:checkable="true"
+    android:title="@string/test1"
+        android:orderInCategory="100"
+    app:actionViewClass="android.widget.CheckBox"
+
+    />
+
+    <!--<item android:id="@+id/action_settings"-->
+        <!--android:title="@string/action_settings"-->
+        <!--android:orderInCategory="100"-->
+        <!--app:showAsAction="never"/>-->
+
+
+    <!--<item android:id="@+id/action_camera"-->
+        <!--android:title="Camera"-->
+        <!--android:orderInCategory="100"-->
+        <!--app:showAsAction="never"/>-->
+
+    <!--<item-->
+        <!--android:id="@+id/action_logout"-->
+        <!--android:title="Logout"-->
+        <!--android:orderInCategory="100"-->
+        <!--app:showAsAction="never"/>-->
+
+    <!--<item-->
+        <!--android:id="@+id/action_refresh"-->
+        <!--android:title="Refresh"-->
+        <!--android:orderInCategory="100"-->
+        <!--android:icon="@drawable/ic_action_refresh"-->
+        <!--app:showAsAction="always"/>-->
+
+    <!--<item-->
+        <!--android:id="@+id/action_delete"-->
+        <!--android:title="Delete"-->
+        <!--android:orderInCategory="100"-->
+        <!--android:icon="@drawable/ic_action_discard"-->
+        <!--app:showAsAction="ifRoom"/>-->
+
+
 
 
 </menu>
+
+
+    <!--<item-->
+    <!--android:id="@+id/test1"-->
+    <!--android:checkable="true"-->
+    <!--android:title="@string/test1"-->
+    <!--app:actionViewClass="android.widget.CheckBox"-->
+
+    <!--/>-->

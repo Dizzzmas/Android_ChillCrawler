@@ -1,13 +1,16 @@
 package com.example.chillcrawler;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -26,13 +29,21 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.view.Menu;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 
@@ -53,7 +64,6 @@ import java.util.UUID;
 
 public class ControlActivity extends AppCompatActivity implements JoystickView.JoystickListener {
 
-    ImageButton sound;
     EditText editText;
     SpeechRecognizer mSpeechRecognizer;
     Intent mSpeechRecognizerIntent;
@@ -144,6 +154,7 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
 
             }
         });
+
 
         findViewById(R.id.microphone).setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -302,22 +313,105 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
         }
     }
 
+
+    //TOOLBAR MENU
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_menu, menu);
+
         return true;
     }
 
-    private void checkPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
-                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.parse("package:" + getPackageName()));
-                startActivity(intent);
-                finish();
-            }
-        }
+    private void showPopup(View v){
+        PopupMenu popup = new PopupMenu(this, v);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.main_menu, popup.getMenu());
+        popup.show();
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+
+        switch (id){
+
+            case R.id.action_test1:
+               item.setChecked(!item.isChecked());
+
+                LinearLayout dim_layout = findViewById(R.id.dim_layout);  //overlay layout
+                LinearLayout voice_layout = findViewById(R.id.voice_layout);
+                if(item.isChecked()) {
+                    dim_layout.setVisibility(View.VISIBLE);
+                    voice_layout.setVisibility(View.VISIBLE);
+                }
+                else if(!item.isChecked()){
+                    dim_layout.setVisibility(View.INVISIBLE);
+                    voice_layout.setVisibility(View.INVISIBLE);
+                }
+               //do stuff
+
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+                item.setActionView(new View(getApplicationContext()));
+                item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+                    @Override
+                    public boolean onMenuItemActionExpand(MenuItem item) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onMenuItemActionCollapse(MenuItem item) {
+                        return false;
+                    }
+                });
+
+
+
+                Toast.makeText(ControlActivity.this, "test1 clicked", Toast.LENGTH_SHORT).show();
+
+                break;
+//            case R.id.action_camera:
+//
+//                Toast.makeText(MainActivity.this, "Camera clicked", Toast.LENGTH_SHORT).show();
+//
+//                break;
+//            case R.id.action_delete:
+//
+//                Toast.makeText(MainActivity.this, "Delete clicked", Toast.LENGTH_SHORT).show();
+//
+//                break;
+//            case R.id.action_logout:
+//
+//                Toast.makeText(MainActivity.this, "Logout clicked", Toast.LENGTH_SHORT).show();
+//
+//                break;
+//            case R.id.action_refresh:
+//
+//                Toast.makeText(MainActivity.this, "Refresh clicked", Toast.LENGTH_SHORT).show();
+//
+//                break;
+//
+
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+//    private void checkPermission() {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            if (!(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
+//                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+//                        Uri.parse("package:" + getPackageName()));
+//                startActivity(intent);
+//                finish();
+//            }
+//        }
+//    }
 
     @Override
     public void onJoystickMoved(float xPercent, float yPercent, int id) {
@@ -350,7 +444,7 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
 
     }
 
-
+//BT CONNECT
     private class ConnectBT extends AsyncTask<Void, Void, Void>  // UI thread
     {
         private boolean ConnectSuccess = true; //if it's here, it's almost connected
