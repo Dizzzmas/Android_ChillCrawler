@@ -93,9 +93,9 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
         ControlActivity.this.new ConnectBT().execute();
         int[] colors = {
                 ContextCompat.getColor(this, R.color.colorGreen),
-                ContextCompat.getColor(this, R.color.colorLightGrey),
+                ContextCompat.getColor(this, android.R.color.holo_blue_light),
                 ContextCompat.getColor(this, R.color.colorGreen),
-                ContextCompat.getColor(this, R.color.colorLightGrey),
+                ContextCompat.getColor(this, android.R.color.holo_blue_light),
                 ContextCompat.getColor(this, R.color.colorGreen)
         };
         int[] heights = {60, 76, 58, 80, 55};
@@ -118,80 +118,21 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
         recognitionProgressView.setSpeechRecognizer(mSpeechRecognizer);
         recognitionProgressView.setColors(colors);
         recognitionProgressView.setBarMaxHeightsInDp(heights);
-//        recognitionProgressView.setRecognitionListener(new RecognitionListenerAdapter() {
-//            @Override
-//            public void onResults(Bundle results) {
-//                //showResults(results);
-//            }
-//        });
-        recognitionProgressView.setCircleRadiusInDp(2);
+        recognitionProgressView.setRecognitionListener(new RecognitionListenerAdapter() {
+            @Override
+            public void onResults(Bundle results) {
+                showResults(results);
+                recognitionProgressView.stop();
+                recognitionProgressView.play();
+            }
+        });
+        //recognitionProgressView.setCircleRadiusInDp(2);
         recognitionProgressView.setSpacingInDp(2);
         recognitionProgressView.setIdleStateAmplitudeInDp(2);
-        recognitionProgressView.setRotationRadiusInDp(10);
+        //recognitionProgressView.setRotationRadiusInDp(10);
         recognitionProgressView.play();
 
 
-
-        mSpeechRecognizer.setRecognitionListener(new RecognitionListener() {
-            @Override
-            public void onReadyForSpeech(Bundle params) {
-
-            }
-
-            @Override
-            public void onBeginningOfSpeech() {
-
-            }
-
-            @Override
-            public void onRmsChanged(float rmsdB) {
-
-            }
-
-            @Override
-            public void onBufferReceived(byte[] buffer) {
-
-            }
-
-            @Override
-            public void onEndOfSpeech() {
-
-            }
-
-            @Override
-            public void onError(int error) {
-
-            }
-
-            @Override
-            public void onResults(Bundle results) {
-
-
-
-                ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-
-                if (matches != null) {
-                    //Log.d("TAG", matches.get(0));
-                    // msg(matches.get(0));
-                    res = matches.get(0);
-                    Log.d("TAG", res);
-                    editText.setText(res);
-                    sendVoice(res);
-                }
-
-
-            }
-
-            @Override
-            public void onPartialResults(Bundle partialResults) {
-
-            }
-
-            @Override
-            public void onEvent(int eventType, Bundle params) {
-
-            }
-        });
 
 
         findViewById(R.id.microphone).setOnTouchListener(new View.OnTouchListener() {
@@ -200,25 +141,26 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
 
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_UP:
+
                         mSpeechRecognizer.stopListening();
                         recognitionProgressView.stop();
+                        recognitionProgressView.play();
 
 
-                        //msg(res);
-                        //sendVoice(res);
                         //editText.setHint("Input...");
                         break;
 
                     case MotionEvent.ACTION_DOWN:
 
-
+                        startRecognition();
                         mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
                         recognitionProgressView.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                startRecognition();
+                               startRecognition();
                             }
                         }, 50);
+
 
                         editText.setText("");
 
@@ -374,7 +316,17 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
         }
     }
 
-    private void startRecognition() {
+    private void showResults(Bundle results) {
+        ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+
+                if (matches != null) {
+                    //Log.d("TAG", matches.get(0));
+                    // msg(matches.get(0));
+                    res = matches.get(0);
+                    Log.d("TAG", res);
+                    editText.setText(res);
+                    sendVoice(res);
+                }
 
     }
 
@@ -387,12 +339,21 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
         return true;
     }
 
-//    private void showPopup(View v){
-//        PopupMenu popup = new PopupMenu(this, v);
-//        MenuInflater inflater = popup.getMenuInflater();
-//        inflater.inflate(R.menu.main_menu, popup.getMenu());
-//        popup.show();
-//    }
+    @Override
+    protected void onDestroy() {
+        if (mSpeechRecognizer != null) {
+            mSpeechRecognizer.destroy();
+        }
+        super.onDestroy();
+    }
+    private void startRecognition()
+    {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en");
+        mSpeechRecognizer.startListening(intent);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -405,6 +366,7 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
         switch (id){
 
             case R.id.action_test1:
+
                item.setChecked(!item.isChecked());
 
                 LinearLayout dim_layout = findViewById(R.id.dim_layout);  //overlay layout
@@ -418,6 +380,7 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
                     voice_layout.setVisibility(View.INVISIBLE);
                 }
                //do stuff
+                editText.setText("");
 
                 item.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
                 item.setActionView(new View(getApplicationContext()));
