@@ -15,6 +15,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:translationZ="0dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,7 +35,7 @@
         android:translationZ="0dp"
         android:background="@drawable/round_button"
         android:foreground="?attr/selectableItemBackgroundBorderless"
-        android:text=" FLEX\nOFF"
+        android:text=" FLEX\nON"
         android:textColor="@color/colorRed"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -92,6 +93,8 @@
         android:translationZ="2dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
         android:background="#90000000"
         android:visibility="invisible"
         android:orientation="vertical"
@@ -108,7 +111,7 @@
         android:clickable="true"
         android:focusable="true"
         android:translationZ="3dp"
-        android:gravity="center|bottom"
+        android:gravity="center"
         android:orientation="vertical"
         android:background="@android:color/transparent"
         android:visibility="invisible"
@@ -120,13 +123,28 @@
         <!--android:layout_marginBottom="8dp"-->
         <!--android:layout_-->
 
-
+        <Button
+            android:id="@+id/tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="115dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/oval"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:padding="15dp"
+            android:text="Tips"
+            android:textAlignment="center"
+            android:textColor="#000000"
+            android:textSize="13dp"
+            android:translationZ="3dp" />
+        <!--35-->
 
         <com.github.zagum.speechrecognitionview.RecognitionProgressView
             android:id="@+id/recognition_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:translationZ="35dp"
+            android:translationZ="3dp"
+            android:layout_weight="1"
             android:layout_marginBottom="35dp"
             android:layout_gravity="center"/>
 

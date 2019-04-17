@@ -21,6 +21,8 @@ import android.provider.Settings;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -29,6 +31,7 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -44,6 +47,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
@@ -69,11 +74,10 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
     Intent mSpeechRecognizerIntent;
     String res;
     RecognitionProgressView recognitionProgressView;
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
 
 
-    private int BUTTON_STATE = 0;
-    private int BUTTON_STATE_ONCE = 0;
-    private int BUTTON_STATE_TWICE = 1;
+
 
     String address = null;
     private ProgressDialog progress;
@@ -83,9 +87,23 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
 
+    private boolean permissionToRecordAccepted = false;
+    private String[] permissions = {Manifest.permission.RECORD_AUDIO};
+        //REQUEST RECORD AUDIO PERMISSION
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_RECORD_AUDIO_PERMISSION:
+                permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                break;
+        }
+        if (!permissionToRecordAccepted) finish();
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //JoystickView test = new JoystickView(this);
         super.onCreate(savedInstanceState);
         Intent newint = getIntent();
         address = newint.getStringExtra("EXTRA_ADDRESS");
@@ -99,8 +117,6 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
                 ContextCompat.getColor(this, R.color.colorGreen)
         };
         int[] heights = {60, 76, 58, 80, 55};
-
-
 
 
         //SpeechRecognizer
@@ -126,13 +142,10 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
                 recognitionProgressView.play();
             }
         });
-        //recognitionProgressView.setCircleRadiusInDp(2);
+
         recognitionProgressView.setSpacingInDp(2);
         recognitionProgressView.setIdleStateAmplitudeInDp(2);
-        //recognitionProgressView.setRotationRadiusInDp(10);
         recognitionProgressView.play();
-
-
 
 
         findViewById(R.id.microphone).setOnTouchListener(new View.OnTouchListener() {
@@ -147,7 +160,7 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
                         recognitionProgressView.play();
 
 
-                        //editText.setHint("Input...");
+
                         break;
 
                     case MotionEvent.ACTION_DOWN:
@@ -157,7 +170,7 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
                         recognitionProgressView.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                               startRecognition();
+                                startRecognition();
                             }
                         }, 50);
 
@@ -165,11 +178,7 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
                         editText.setText("");
 
 
-                        //msg("Start listening");
 
-
-                        //editText.setHint("Listening...");
-                        //mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
 
                         break;
                 }
@@ -177,8 +186,6 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
             }
 
         });
-
-
 
 
 //BOOM MENU
@@ -199,7 +206,7 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
                     @Override
                     public void onBoomButtonClick(int index) {
                         // When the boom-button corresponding this builder is clicked.
-                        Toast.makeText(ControlActivity.this, "Clicked " + index, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(ControlActivity.this, "Clicked " + index, Toast.LENGTH_SHORT).show();
                         sendStand();
                     }
                 });
@@ -216,7 +223,7 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
                     @Override
                     public void onBoomButtonClick(int index) {
                         // When the boom-button corresponding this builder is clicked.
-                        Toast.makeText(ControlActivity.this, "Clicked " + index, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(ControlActivity.this, "Clicked " + index, Toast.LENGTH_SHORT).show();
                         sendSit();
                     }
                 });
@@ -234,7 +241,7 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
                     @Override
                     public void onBoomButtonClick(int index) {
                         // When the boom-button corresponding this builder is clicked.
-                        Toast.makeText(ControlActivity.this, "Clicked " + index, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(ControlActivity.this, "Clicked " + index, Toast.LENGTH_SHORT).show();
                         sendWave();
                     }
                 });
@@ -248,37 +255,64 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
 
             @Override
             public void onClick(View view) {
-                //sendOff();
-                if (BUTTON_STATE == BUTTON_STATE_ONCE) {
-                    flex.setTextColor(getResources().getColor(R.color.colorBlue));
-                    flex.setText("FLEX\nON");
 
-                    BUTTON_STATE = BUTTON_STATE_TWICE;
-                } else if (BUTTON_STATE == BUTTON_STATE_TWICE) {
-                    flex.setTextColor(getResources().getColor(R.color.colorRed));
-                    flex.setText("FLEX\nOFF");
+                    sendflex();
 
-                    BUTTON_STATE = BUTTON_STATE_ONCE;
-                }
+
             }
         });
 
 
+        final Button tips = findViewById(R.id.tips);
+        tips.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // inflate the layout of the popup window
+                LayoutInflater inflater = (LayoutInflater)
+                        getSystemService(LAYOUT_INFLATER_SERVICE);
+                View popupView = inflater.inflate(R.layout.tips_popup, null, false);
+
+
+                // create the popup window
+//
+               popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+                int width = popupView.getMeasuredWidth();
+                int height = popupView.getMeasuredHeight();
+
+                boolean focusable = true; // lets taps outside the popup also dismiss it
+                final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+                // show the popup window
+                // which view you pass in doesn't matter, it is only used for the window token
+                popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
+                //tips.setVisibility(View.INVISIBLE);
+
+                // dismiss the popup window when touched
+                popupView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                       //tips.setVisibility(View.VISIBLE);
+                        popupWindow.dismiss();
+
+                        return true;
+                    }
+                });
+            }
+        });
+
     }
 
-
-
-
-
+//for toasts
     private void msg(String s) {
         Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
     }
 
-
+//COMMANDS TO ARDUINO
     private void sendStand() {
         if (btSocket != null) {
             try {
-                btSocket.getOutputStream().write("STAND".getBytes());
+                btSocket.getOutputStream().write("STAND UP".getBytes());
             } catch (IOException e) {
                 msg("Error");
             }
@@ -288,7 +322,7 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
     private void sendVoice(String voice) {
         if (btSocket != null) {
             try {
-               voice = voice.toUpperCase();
+                voice = voice.toUpperCase();
                 btSocket.getOutputStream().write(voice.getBytes());
             } catch (IOException e) {
                 msg("Error");
@@ -299,7 +333,7 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
     private void sendSit() {
         if (btSocket != null) {
             try {
-                btSocket.getOutputStream().write("SIT".getBytes());
+                btSocket.getOutputStream().write("SIT DOWN".getBytes());
             } catch (IOException e) {
                 msg("Error");
             }
@@ -319,16 +353,29 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
     private void showResults(Bundle results) {
         ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 
-                if (matches != null) {
-                    //Log.d("TAG", matches.get(0));
-                    // msg(matches.get(0));
-                    res = matches.get(0);
-                    Log.d("TAG", res);
-                    editText.setText(res);
-                    sendVoice(res);
-                }
+        if (matches != null) {
+            //Log.d("TAG", matches.get(0));
+            // msg(matches.get(0));
+            res = matches.get(0);
+            Log.d("TAG", res);
+            editText.setText(res);
+            sendVoice(res);
+        }
 
     }
+
+    private void sendflex() {
+        if (btSocket != null) {
+            try {
+                btSocket.getOutputStream().write("FLEX".getBytes());
+            } catch (IOException e) {
+                msg("Error");
+            }
+        }
+    }
+
+
+
 
     //TOOLBAR MENU
     @Override
@@ -346,8 +393,8 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
         }
         super.onDestroy();
     }
-    private void startRecognition()
-    {
+
+    private void startRecognition() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -363,23 +410,25 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
         int id = item.getItemId();
 
 
-        switch (id){
+        switch (id) {
 
-            case R.id.action_test1:
+            case R.id.action_voice:
 
-               item.setChecked(!item.isChecked());
+                //REQUEST RECORD_AUDIO permission
+                ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+
+                item.setChecked(!item.isChecked());
 
                 LinearLayout dim_layout = findViewById(R.id.dim_layout);  //overlay layout
                 LinearLayout voice_layout = findViewById(R.id.voice_layout);
-                if(item.isChecked()) {
+                if (item.isChecked()) {
                     dim_layout.setVisibility(View.VISIBLE);
                     voice_layout.setVisibility(View.VISIBLE);
-                }
-                else if(!item.isChecked()){
+                } else if (!item.isChecked()) {
                     dim_layout.setVisibility(View.INVISIBLE);
                     voice_layout.setVisibility(View.INVISIBLE);
                 }
-               //do stuff
+                //do stuff
                 editText.setText("");
 
                 item.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
@@ -397,28 +446,27 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
                 });
 
 
-
-                Toast.makeText(ControlActivity.this, "test1 clicked", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(ControlActivity.this, "test1 clicked", Toast.LENGTH_SHORT).show();
 
                 break;
-//            case R.id.action_camera:
-//
-//                Toast.makeText(MainActivity.this, "Camera clicked", Toast.LENGTH_SHORT).show();
-//
-//                break;
+//            case R.id.action_exit:
+//                finish();
+//                //System.exit(0);
+//                return true;
+            //Toast.makeText(MainActivity.this, "smthing", Toast.LENGTH_SHORT).show();
 //            case R.id.action_delete:
 //
-//                Toast.makeText(MainActivity.this, "Delete clicked", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "smthing", Toast.LENGTH_SHORT).show();
 //
 //                break;
 //            case R.id.action_logout:
 //
-//                Toast.makeText(MainActivity.this, "Logout clicked", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "smthing", Toast.LENGTH_SHORT).show();
 //
 //                break;
 //            case R.id.action_refresh:
 //
-//                Toast.makeText(MainActivity.this, "Refresh clicked", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "smthing", Toast.LENGTH_SHORT).show();
 //
 //                break;
 //
@@ -429,45 +477,56 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
         return super.onOptionsItemSelected(item);
     }
 
-//    private void checkPermission() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            if (!(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
-//                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-//                        Uri.parse("package:" + getPackageName()));
-//                startActivity(intent);
-//                finish();
-//            }
-//        }
-//    }
+//WHEN JOYSTICK TOUCHED
 
     @Override
     public void onJoystickMoved(float xPercent, float yPercent, int id) {
         Log.d("Main Mehtod", "X percent: " + xPercent + "Y percent: " + yPercent);   //JOYSTICK
 
-        String buff = "STANDBY";
+
         if (xPercent > 0.90) {
-            buff = "RIGHT\n";
+
+            try {
+                btSocket.getOutputStream().write("TURN RIGHT\0".getBytes());
+            } catch (IOException e) {
+                msg("Error");
+            }
             Log.d("Main Mehtod", "RIGHT SENT");
         } else if (xPercent < -0.90) {
-            buff = "LEFT\n";
+
+            try {
+                btSocket.getOutputStream().write("TURN LEFT\0".getBytes());
+            } catch (IOException e) {
+                msg("Error");
+            }
             Log.d("Main Mehtod", "LEFT SENT");
         }
 
         if (yPercent < -0.90) {
-            buff = "FORWARD\n";
-            Log.d("Main Mehtod", "FORWARD SENT");
-        } else if (yPercent > 0.90) {
-            buff = "BACK\n";
-            Log.d("Main Mehtod", "BACK SENT");
-        }
 
-        if (buff != "STANDBY") {
             try {
-                btSocket.getOutputStream().write(buff.toString().getBytes());
+                btSocket.getOutputStream().write("MOVE FORWARD\0".getBytes());
             } catch (IOException e) {
                 msg("Error");
             }
+            Log.d("Main Mehtod", "FORWARD SENT");
+        } else if (yPercent > 0.90) {
+
+            try {
+                btSocket.getOutputStream().write("MOVE BACK\0".getBytes());
+            } catch (IOException e) {
+                msg("Error");
+            }
+            Log.d("Main Mehtod", "BACK SENT");
         }
+
+//        if (buff != "STANDBY") {
+//            try {
+//                btSocket.getOutputStream().write(buff.toString().getBytes());
+//            } catch (IOException e) {
+//                msg("Error");
+//            }
+//        }
 
     }
 
@@ -516,4 +575,6 @@ public class ControlActivity extends AppCompatActivity implements JoystickView.J
     }
 
 }
+
+
 
