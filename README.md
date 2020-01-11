@@ -1,2 +1,3 @@
 # Android_ChillCrawler
-My attempts at building Android app for Arduino project
+Android app for the Arduino powered spider-robot project.
+Team repo url: https://github.com/progbase/ChillProjects
